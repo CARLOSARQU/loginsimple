@@ -19,11 +19,15 @@ pipeline {
             }
         }
 
-        stage('2. Test Unitarios') {
+        stage('2. Test Unitarios y Calidad') {
             steps {
                 dir("${env.PROYECTO_ANDROID}") {
-                    echo '🧪 Ejecutando pruebas unitarias...'
-                    bat 'gradlew.bat testDebugUnitTest'
+                    echo '🧪 Ejecutando pruebas y generando reporte de cobertura...'
+                    // Ejecuta tests y genera el XML para Sonar
+                    bat 'gradlew.bat clean :app:testDebugUnitTest :app:koverXmlReport'
+                    
+                    echo '📡 Enviando análisis a SonarCloud...'
+                    bat 'gradlew.bat :app:sonar'
                 }
             }
         }
